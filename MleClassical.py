@@ -14,22 +14,18 @@ class ClassicalModel:
         self.u = [0.0,0.0]
         self.var = [0.0,0.0]
         numPixels = [0,0]
-        for img,mask in images:
-            cv.imshow("image",img)
-            for i in range(2):
+        for i in range(2):
+            for img,mask in images:
                 select = mask == 255*i
                 self.u[i]+=np.sum(img[select])
                 numPixels[i]+=np.sum(select)
-        self.u[0]/= numPixels[0]
-        self.u[1]/= numPixels[1]
-        for img,mask in images:
-            img2 = []
-            for i in range(2):
+            self.u[i]/= numPixels[i]
+            
+            for img,mask in images:
                 select = mask == 255*i
                 img2 = (img-self.u[i])**2
                 self.var[i] += np.sum(img2[select])
-        self.var[0]/=numPixels[0]
-        self.var[1]/=numPixels[1]
+            self.var[i]/=numPixels[i]
     def logProb(self,image,i):
         return (image - self.u[i])**2/self.var[i]+np.log(self.var[i])
     def segmentImage(self,image):
