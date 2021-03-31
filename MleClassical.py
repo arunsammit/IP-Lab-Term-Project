@@ -38,11 +38,14 @@ class ClassicalModel:
         outputImage[logProb0 > logProb1 ] = 255
         return outputImage
     def segmentImages(self,images):
+        outputImages = []
         for image in images:
             outputImage = self.segmentImage(image)
             cv.imshow("image", image)
             cv.imshow('segmentedOutputImage',outputImage)
             cv.waitKey(0)
+            outputImages.append(outputImage)
+        return outputImages
     def plotModel(self):
         x = np.arange(0,256,1)
         y1 = scipy.stats.norm(self.u[0,0],self.var[0,0]**.5)
@@ -56,16 +59,20 @@ class ClassicalModel:
 #%%
 def getImages(imgsPath, masksPath):
     images = []
+    names = []
     for imgName in os.listdir(imgsPath):
         img = cv.imread(imgsPath +'/'+ imgName)
         img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
         mask = cv.imread(masksPath + '/'+ imgName)
         mask = cv.cvtColor(mask,cv.COLOR_BGR2GRAY)
         images.append((img,mask))
-    return images
+        names.append(imgName)
+    return images,names
 
 #%%
-images = getImages('./input_image', './mask')
+images,names = getImages('./input_image', './mask')
 fp = ClassicalModel(images)
 fp.plotModel()
-fp.segmentImages([image[0] for image in images])
+outputImages = fp.segmentImages([image[0] for image in images])
+for i,outputImg in enumerate(outputImages):
+    cv.imwrite('output_image/classical/'+names[i],outputImg)
