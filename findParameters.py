@@ -15,7 +15,6 @@ class ClassicalModel:
         numPixels = np.zeros((1,2))
         for img,mask in images:
             cv.imshow("image",img)
-            cv.imshow("mask",mask)
             for i in range(2):
                 select = mask == 255*i
                 self.u[0,i]+=np.sum(img[select])
@@ -41,6 +40,7 @@ class ClassicalModel:
     def segmentImages(self,images):
         for image in images:
             outputImage = self.segmentImage(image)
+            cv.imshow("image", image)
             cv.imshow('segmentedOutputImage',outputImage)
             cv.waitKey(0)
     def plotModel(self):
@@ -48,8 +48,9 @@ class ClassicalModel:
         y1 = scipy.stats.norm(self.u[0,0],self.var[0,0]**.5)
         y2 = scipy.stats.norm(self.u[0,1], self.var[0, 1]**.5)
         fig, ax = plt.subplots()
-        ax.plot(x,y1.pdf(x))
-        ax.plot(x,y2.pdf(x))
+        ax.plot(x,y1.pdf(x),label='background')
+        ax.plot(x,y2.pdf(x),label='foreground')
+        ax.legend()
         plt.show()
 
 #%%
