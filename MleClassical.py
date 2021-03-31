@@ -11,27 +11,27 @@ class ClassicalModel:
     def __init__(self, images):
         self.developModel(images)
     def developModel(self, images):
-        self.u = np.zeros((1, 2))
-        self.var = np.zeros((1,2))
-        numPixels = np.zeros((1,2))
+        self.u = [0.0,0.0]
+        self.var = [0.0,0.0]
+        numPixels = [0,0]
         for img,mask in images:
             cv.imshow("image",img)
             for i in range(2):
                 select = mask == 255*i
-                self.u[0,i]+=np.sum(img[select])
-                numPixels[0,i]+=np.sum(select)
-        self.u[0,0]/= numPixels[0,0]
-        self.u[0,1]/= numPixels[0,1]
+                self.u[i]+=np.sum(img[select])
+                numPixels[i]+=np.sum(select)
+        self.u[0]/= numPixels[0]
+        self.u[1]/= numPixels[1]
         for img,mask in images:
             img2 = []
             for i in range(2):
                 select = mask == 255*i
-                img2 = (img-self.u[0,i])**2
-                self.var[0,i] += np.sum(img2[select])
-        self.var[0,0]/=numPixels[0,0]
-        self.var[0,1]/=numPixels[0,1]
+                img2 = (img-self.u[i])**2
+                self.var[i] += np.sum(img2[select])
+        self.var[0]/=numPixels[0]
+        self.var[1]/=numPixels[1]
     def logProb(self,image,i):
-        return (image - self.u[0,i])**2/self.var[0,i]+np.log(self.var[0,i])
+        return (image - self.u[i])**2/self.var[i]+np.log(self.var[i])
     def segmentImage(self,image):
         outputImage = np.zeros((image.shape),dtype=np.uint8)
         logProb0 = self.logProb(image, 0)
@@ -49,8 +49,8 @@ class ClassicalModel:
         return outputImages
     def plotModel(self):
         x = np.arange(0,256,1)
-        y1 = scipy.stats.norm(self.u[0,0],self.var[0,0]**.5)
-        y2 = scipy.stats.norm(self.u[0,1], self.var[0, 1]**.5)
+        y1 = scipy.stats.norm(self.u[0],self.var[0]**.5)
+        y2 = scipy.stats.norm(self.u[1], self.var[1]**.5)
         fig, ax = plt.subplots()
         ax.plot(x,y1.pdf(x),label='background')
         ax.plot(x,y2.pdf(x),label='foreground')
