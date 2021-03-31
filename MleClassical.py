@@ -5,6 +5,7 @@ import sys
 import os
 import matplotlib.pyplot as plt
 import scipy.stats
+from Utility import getImages
 #%%
 class ClassicalModel:
     def __init__(self, images):
@@ -57,22 +58,10 @@ class ClassicalModel:
         plt.show()
 
 #%%
-def getImages(imgsPath, masksPath):
-    images = []
-    names = []
-    for imgName in os.listdir(imgsPath):
-        img = cv.imread(imgsPath +'/'+ imgName)
-        img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-        mask = cv.imread(masksPath + '/'+ imgName)
-        mask = cv.cvtColor(mask,cv.COLOR_BGR2GRAY)
-        images.append((img,mask))
-        names.append(imgName)
-    return images,names
-
-#%%
-images,names = getImages('./input_image', './mask')
-fp = ClassicalModel(images)
-fp.plotModel()
-outputImages = fp.segmentImages([image[0] for image in images])
-for i,outputImg in enumerate(outputImages):
-    cv.imwrite('output_image/classical/'+names[i],outputImg)
+if __name__ == "__main__":
+    images,names = getImages('./input_image', './mask')
+    fp = ClassicalModel(images)
+    fp.plotModel()
+    outputImages = fp.segmentImages([image[0] for image in images])
+    for i,outputImg in enumerate(outputImages):
+        cv.imwrite('output_image/classical/'+names[i],outputImg)
