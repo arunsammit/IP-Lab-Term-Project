@@ -21,7 +21,7 @@ class ProposedModel:
             for img, mask in images:
                 select = mask == 255*i
                 self.u[i][0, 0] += np.sum(img[select])
-                self.u[i][1, 0] += np.mean(img) 
+                self.u[i][1, 0] += np.mean(img)*np.sum(select) 
                 numPixels[i] += np.sum(select)
             self.u[i] /= numPixels[i]
 
