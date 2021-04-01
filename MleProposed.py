@@ -18,15 +18,12 @@ class ProposedModel:
         self.var = [np.zeros((2, 2)), np.zeros((2, 2))]
         numPixels = [0, 0]
         for i in range(2):
-            totPixelCnt = 0
             for img, mask in images:
                 select = mask == 255*i
                 self.u[i][0, 0] += np.sum(img[select])
-                self.u[i][1, 0] += np.sum(img) 
+                self.u[i][1, 0] += np.mean(img) 
                 numPixels[i] += np.sum(select)
-                totPixelCnt += img.size
-            self.u[i][0, 0] /= numPixels[i]
-            self.u[i][1, 0] /= totPixelCnt
+            self.u[i] /= numPixels[i]
 
             for img, mask in images:
                 mean_intensity_centred = np.mean(img)-self.u[i][1, 0]
@@ -34,12 +31,10 @@ class ProposedModel:
                 img_centred = img-self.u[i][0, 0]
                 img_centred_2 = (img_centred)**2
                 self.var[i][0, 0] += np.sum(img_centred_2[select])
-                self.var[i][0, 1] += np.sum(img_centred*mean_intensity_centred)
-                self.var[i][1, 1] += img.size*(mean_intensity_centred**2)
+                self.var[i][0, 1] += np.sum(img_centred[select]*mean_intensity_centred)
+                self.var[i][1, 1] += np.sum(select)*(mean_intensity_centred**2)
             self.var[i][1, 0] = self.var[i][0, 1]
-            self.var[i][0, 0] /= numPixels[0]
-            self.var[i][0, 1] /= totPixelCnt
-            self.var[i][1, 0] = self.var[i][0, 1]
+            self.var[i] /= numPixels[i]
 
     def logProb(self, img, i):
         mean_centred = np.mean(img)-self.u[i][1, 0]
