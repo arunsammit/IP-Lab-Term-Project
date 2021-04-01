@@ -5,7 +5,7 @@ import sys
 import os
 import matplotlib.pyplot as plt
 import scipy.stats
-from Utility import getImages, segmentImages
+from Utility import getImages
 # %%
 
 
@@ -57,30 +57,37 @@ class ProposedModel:
         outputImage = np.zeros((img.shape), dtype=np.uint8)
         logProb0 = self.logProb(img, 0)
         logProb1 = self.logProb(img, 1)
-        # self.plotModel(img)
         outputImage[logProb1 < logProb0] = 255
         return outputImage
 
-    def plotModel(self, img):
+    def plotModel(self, img, ax):
         x = np.arange(0, 256, 1)
         x = x.reshape((x.size, 1))
         y = np.ones((x.size, 1))*np.mean(img)
         ip = np.dstack((x,y))
         y1 = scipy.stats.multivariate_normal(self.u[0].flatten(), self.var[0])
         y2 = scipy.stats.multivariate_normal(self.u[1].flatten(), self.var[1])
-        _, ax = plt.subplots()
         ax.plot(x, y1.pdf(ip), label='background')
         ax.plot(x, y2.pdf(ip), label='foreground')
         ax.legend()
-        plt.show()
+        return ax
 
 #%%
 if __name__ == "__main__":
     images, names = getImages('./input_image', './mask')
     fp = ProposedModel(images)
-    outputImages = segmentImages(fp, [image[0] for image in images])
-    for i, outputImg in enumerate(outputImages):
-        cv.imwrite('output_image/proposed/'+names[i], outputImg)
+    figs = []
+    for i, image in enumerate([image[0] for image in images]):
+        outputImage = fp.segmentImage(image)
+        fig, ax = plt.subplots()
+        fp.plotModel(image, ax)
+        figs.append(fig)
+        fig.savefig(f'./output_image/proposed/plots/{names[i]}')
+        cv.imshow("image", image)
+        cv.imshow('segmentedOutputImage', outputImage)
+        cv.imwrite('output_image/proposed/'+names[i], outputImage)
+        cv.waitKey(0)
+    plt.show()
 
 
     
