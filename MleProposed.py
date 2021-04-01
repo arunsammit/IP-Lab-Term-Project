@@ -80,7 +80,7 @@ if __name__ == "__main__":
         fig, ax = plt.subplots()
         fp.plotModel(image[0], ax)
         figs.append(fig)
-        fig.savefig(f'./output_image/classical/plots/{names[i]}')
+        fig.savefig(f'./output_image/proposed/plots/{names[i]}')
         # print(image[0].shape)
         # print(outputImage.shape)
         dn = (outputImage == 0)
@@ -102,7 +102,7 @@ if __name__ == "__main__":
         # cv.imshow("image", image[0])
         # cv.imshow("mask", image[1])
         # cv.imshow('segmentedOutputImage', outputImage)
-        cv.imwrite('output_image/classical/'+names[i], outputImage)
+        cv.imwrite('output_image/proposed/'+names[i], outputImage)
         cv.waitKey(0)
  
     print("Specificity : ", str(np.mean(specificity)*100))
