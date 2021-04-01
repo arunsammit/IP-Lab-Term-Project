@@ -80,18 +80,31 @@ if __name__ == "__main__":
         fig, ax = plt.subplots()
         fp.plotModel(image[0], ax)
         figs.append(fig)
-        fig.savefig(f'./output_image/classical/plots/{names[i]}')
+        fig.savefig(f'./output_image/proposed/plots/{names[i]}')
         # print(image[0].shape)
         # print(outputImage.shape)
-        specificity.append(np.sum([~outputImage == ~image[1]]) / np.sum(~image[1]))
-        sensitivity.append(np.sum([outputImage == image[1]]) / np.sum(image[1]))
-        dice.append((2.0 * np.sum([outputImage == image[1]])) / (np.sum(outputImage) + np.sum(image[1])))
+        dn = (outputImage == 0)
+        dp = (outputImage == 255)
+
+        tn = (image[1] == 0)
+        tp = (image[1] == 255)
         
+        dtp = (dp & tp)
+        dtn = (dn & tn)
+        # print(np.unique(outputImage))
+        # print(np.unique(image[1]))
+        
+        specificity.append(np.sum(dtn) / np.sum(tn))
+        sensitivity.append(np.sum(dtp) / np.sum(tp))
+        dice.append((2.0 * np.sum(dtp)) / (np.sum(dp) + np.sum(tp)))
+        
+
         # cv.imshow("image", image[0])
         # cv.imshow("mask", image[1])
         # cv.imshow('segmentedOutputImage', outputImage)
-        cv.imwrite('output_image/classical/'+names[i], outputImage)
+        cv.imwrite('output_image/proposed/'+names[i], outputImage)
         cv.waitKey(0)
+ 
     print("Specificity : ", str(np.mean(specificity)*100))
     print("Sensitivity : ", str(np.mean(sensitivity)*100))
     print("Dice Measure : ", str(np.mean(dice)*100))
