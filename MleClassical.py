@@ -5,7 +5,7 @@ import sys
 import os
 import matplotlib.pyplot as plt
 import scipy.stats
-from Utility import getImages
+from Utility import getImages, segmentImages
 #%%
 class ClassicalModel:
     def __init__(self, images):
@@ -34,20 +34,11 @@ class ClassicalModel:
         logProb1 = self.logProb(image, 1)
         outputImage[logProb0 > logProb1 ] = 255
         return outputImage
-    def segmentImages(self,images):
-        outputImages = []
-        for image in images:
-            outputImage = self.segmentImage(image)
-            cv.imshow("image", image)
-            cv.imshow('segmentedOutputImage',outputImage)
-            cv.waitKey(0)
-            outputImages.append(outputImage)
-        return outputImages
     def plotModel(self):
         x = np.arange(0,256,1)
         y1 = scipy.stats.norm(self.u[0],self.var[0]**.5)
         y2 = scipy.stats.norm(self.u[1], self.var[1]**.5)
-        fig, ax = plt.subplots()
+        _, ax = plt.subplots()
         ax.plot(x,y1.pdf(x),label='background')
         ax.plot(x,y2.pdf(x),label='foreground')
         ax.legend()
@@ -58,6 +49,6 @@ if __name__ == "__main__":
     images,names = getImages('./input_image', './mask')
     fp = ClassicalModel(images)
     fp.plotModel()
-    outputImages = fp.segmentImages([image[0] for image in images])
+    outputImages = segmentImages(fp, [image[0] for image in images])
     for i,outputImg in enumerate(outputImages):
         cv.imwrite('output_image/classical/'+names[i],outputImg)
