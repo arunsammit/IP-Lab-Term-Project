@@ -1,4 +1,4 @@
-#%%
+
 import numpy as np
 import cv2 as cv
 import sys
@@ -6,7 +6,7 @@ import os
 import matplotlib.pyplot as plt
 import scipy.stats
 from Utility import getImages
-#%%
+
 class ClassicalModel:
     def __init__(self, images):
         self.developModel(images)
@@ -41,18 +41,34 @@ class ClassicalModel:
         ax.plot(x,y1.pdf(x),label='background')
         ax.plot(x,y2.pdf(x),label='foreground')
 
-#%%
+
 if __name__ == "__main__":
-    images,names = getImages('./input_image', './mask')
+    images, names = getImages('./input_image', './mask')
     fp = ClassicalModel(images)
-    for i,image in enumerate([image[0] for image in images]):
-        outputImage = fp.segmentImage(image)
-        cv.imshow("image", image)
-        cv.imshow('segmentedOutputImage', outputImage)
+    figs = []
+    dice = []
+    specificity = []
+    sensitivity = []
+
+    for i, image in enumerate([image for image in images]):
+        outputImage = fp.segmentImage(image[0])
+        fig, ax = plt.subplots()
+        fp.plotModel(ax)
+        figs.append(fig)
+        fig.savefig(f'./output_image/classical/plots/{names[i]}')
+        # print(image[0].shape)
+        # print(outputImage.shape)
+        specificity.append(np.sum([~outputImage == ~image[1]]) / np.sum(~image[1]))
+        sensitivity.append(np.sum([outputImage == image[1]]) / np.sum(image[1]))
+        dice.append((2.0 * np.sum([outputImage == image[1]])) / (np.sum(outputImage) + np.sum(image[1])))
+        
+        # cv.imshow("image", image[0])
+        # cv.imshow("mask", image[1])
+        # cv.imshow('segmentedOutputImage', outputImage)
+        cv.imwrite('output_image/classical/'+names[i], outputImage)
         cv.waitKey(0)
-        cv.imwrite('output_image/classical/'+names[i],outputImage)
-    fig, ax = plt.subplots()
-    fp.plotModel(ax)
-    ax.legend()
-    plt.show()
-    fig.savefig('output_image/classical/plots/model.jpg')
+    print("Specificity : ", str(np.mean(specificity)*100))
+    print("Sensitivity : ", str(np.mean(sensitivity)*100))
+    print("Dice Measure : ", str(np.mean(dice)*100))
+    # plt.show()
+
