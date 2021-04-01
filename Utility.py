@@ -11,3 +11,13 @@ def getImages(imgsPath, masksPath):
         images.append((img, mask))
         names.append(imgName)
     return images, names
+
+def segmentImages(model, images):
+    outputImages = []
+    for image in images:
+        outputImage = model.segmentImage(image)
+        cv.imshow("image", image)
+        cv.imshow('segmentedOutputImage', outputImage)
+        cv.waitKey(0)
+        outputImages.append(outputImage)
+    return outputImages
