@@ -81,6 +81,7 @@ if __name__ == "__main__":
         fp.plotModel(image[0], ax)
         figs.append(fig)
         fig.savefig(f'./output_image/proposed/plots/{names[i]}')
+        plt.close(fig)
         # print(image[0].shape)
         # print(outputImage.shape)
         dn = (outputImage == 0)
