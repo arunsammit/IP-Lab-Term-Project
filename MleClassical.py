@@ -79,10 +79,10 @@ if __name__ == "__main__":
         # cv.imshow("mask", image[1])
         # cv.imshow('segmentedOutputImage', outputImage)
         cv.imwrite('output_image/classical/'+names[i], outputImage)
-        cv.waitKey(0)
-
-    print("Specificity : ", str(np.mean(specificity)*100))
-    print("Sensitivity : ", str(np.mean(sensitivity)*100))
-    print("Dice Measure : ", str(np.mean(dice)*100))
+        # cv.waitKey(0)
+    f = open('results_classical.txt','w')
+    f.write("Specificity : "+ str(np.mean(specificity)*100))
+    f.write("Sensitivity : "+ str(np.mean(sensitivity)*100))
+    f.write("Dice Measure : "+ str(np.mean(dice)*100))
     # plt.show()
 
