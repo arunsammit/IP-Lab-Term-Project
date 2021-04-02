@@ -107,13 +107,15 @@ if __name__ == "__main__":
 
         mask = image[1]
         mask_comp = 255 - mask
+        fig1, ax1 = plt.subplots()
 
         histogram_fore = cv.calcHist([image[0]], [0], mask, [256], [1, 256])
         histogram_back = cv.calcHist([image[0]], [0], mask_comp, [256], [1, 256])
         
-        plt.plot(histogram_fore)
-        plt.plot(histogram_back)
-        plt.savefig("output_image/proposed/histogram_"+names[i])
+        ax1.plot(histogram_fore, label='foreground')
+        ax1.plot(histogram_back, label='background')
+        ax1.legend()
+        fig1.savefig("output_image/proposed/histogram_"+names[i])
  
     print("Specificity : ", str(np.mean(specificity)*100))
     print("Sensitivity : ", str(np.mean(sensitivity)*100))

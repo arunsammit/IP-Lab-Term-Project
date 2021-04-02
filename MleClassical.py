@@ -50,12 +50,14 @@ if __name__ == "__main__":
     specificity = []
     sensitivity = []
 
+    fig, ax = plt.subplots()
+    fp.plotModel(ax)
+    figs.append(fig)
+    fig.savefig(f'./output_image/classical/plots/plot.jpg')
+
     for i, image in enumerate([image for image in images]):
         outputImage = fp.segmentImage(image[0])
-        fig, ax = plt.subplots()
-        fp.plotModel(ax)
-        figs.append(fig)
-        fig.savefig(f'./output_image/classical/plots/{names[i]}')
+        
         # print(image[0].shape)
         # print(outputImage.shape)
         dn = (outputImage == 0)
