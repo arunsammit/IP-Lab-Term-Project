@@ -104,6 +104,16 @@ if __name__ == "__main__":
         # cv.imshow('segmentedOutputImage', outputImage)
         cv.imwrite('output_image/proposed/'+names[i], outputImage)
         cv.waitKey(0)
+
+        mask = image[1]
+        mask_comp = 255 - mask
+
+        histogram_fore = cv.calcHist([image[0]], [0], mask, [256], [1, 256])
+        histogram_back = cv.calcHist([image[0]], [0], mask_comp, [256], [1, 256])
+        
+        plt.plot(histogram_fore)
+        plt.plot(histogram_back)
+        plt.savefig("output_image/proposed/histogram_"+names[i])
  
     print("Specificity : ", str(np.mean(specificity)*100))
     print("Sensitivity : ", str(np.mean(sensitivity)*100))
