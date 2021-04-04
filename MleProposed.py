@@ -68,20 +68,20 @@ class ProposedModel:
 
 
 if __name__ == "__main__":
-    images, names = getImages('./input_image', './mask')
+    images, names = getImages('./input_synthetic', './mask_synthetic')
     fp = ProposedModel(images)
     figs = []
     dice = []
     specificity = []
     sensitivity = []
+    total_pixel = 0
 
     for i, image in enumerate([image for image in images]):
         outputImage = fp.segmentImage(image[0])
         fig, ax = plt.subplots()
         fp.plotModel(image[0], ax)
         figs.append(fig)
-        fig.savefig(f'./output_image/proposed/plots/{names[i]}')
-        plt.close(fig)
+        fig.savefig(f'./output_synthetic/proposed/plots/{names[i]}')
         # print(image[0].shape)
         # print(outputImage.shape)
         dn = (outputImage == 0)
@@ -95,16 +95,19 @@ if __name__ == "__main__":
         # print(np.unique(outputImage))
         # print(np.unique(image[1]))
         
-        specificity.append(np.sum(dtn) / np.sum(tn))
-        sensitivity.append(np.sum(dtp) / np.sum(tp))
-        dice.append((2.0 * np.sum(dtp)) / (np.sum(dp) + np.sum(tp)))
+        size = outputImage.shape[0] * outputImage.shape[1]
+        total_pixel += size
+
+        specificity.append((np.sum(dtn) / np.sum(tn))*size)
+        sensitivity.append((np.sum(dtp) / np.sum(tp))*size)
+        dice.append(((2.0 * np.sum(dtp)) / (np.sum(dp) + np.sum(tp)))*size)
         
 
         # cv.imshow("image", image[0])
         # cv.imshow("mask", image[1])
         # cv.imshow('segmentedOutputImage', outputImage)
-        cv.imwrite('output_image/proposed/'+names[i], outputImage)
-        # cv.waitKey(0)
+        cv.imwrite('output_synthetic/proposed/'+names[i], outputImage)
+        cv.waitKey(0)
 
         mask = image[1]
         mask_comp = 255 - mask
@@ -116,11 +119,11 @@ if __name__ == "__main__":
         ax1.plot(histogram_fore, label='foreground')
         ax1.plot(histogram_back, label='background')
         ax1.legend()
-        fig1.savefig("output_image/proposed/histogram_"+names[i])
-    f = open('results_proposed.txt','w')
-    f.write("Specificity : "+ str(np.mean(specificity)*100)+'\n')
-    f.write("Sensitivity : "+ str(np.mean(sensitivity)*100)+'\n')
-    f.write("Dice Measure : "+ str(np.mean(dice)*100)+'\n')
+        fig1.savefig("output_synthetic/proposed/histogram_"+names[i])
+ 
+    print("Specificity : ", str(np.sum(specificity)*100/total_pixel))
+    print("Sensitivity : ", str(np.sum(sensitivity)*100/total_pixel))
+    print("Dice Measure : ", str(np.sum(dice)*100/total_pixel))
     # plt.show()
 
 
