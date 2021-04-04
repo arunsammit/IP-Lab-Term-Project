@@ -68,7 +68,7 @@ class ProposedModel:
 
 
 if __name__ == "__main__":
-    images, names = getImages('./input_image', './mask')
+    images, names = getImages('./input_synthetic', './mask_synthetic')
     fp = ProposedModel(images)
     figs = []
     dice = []
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         fig, ax = plt.subplots()
         fp.plotModel(image[0], ax)
         figs.append(fig)
-        fig.savefig(f'./output_image/proposed/plots/{names[i]}')
+        fig.savefig(f'./output_synthetic/proposed/plots/{names[i]}')
         # print(image[0].shape)
         # print(outputImage.shape)
         dn = (outputImage == 0)
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         # cv.imshow("image", image[0])
         # cv.imshow("mask", image[1])
         # cv.imshow('segmentedOutputImage', outputImage)
-        cv.imwrite('output_image/proposed/'+names[i], outputImage)
+        cv.imwrite('output_synthetic/proposed/'+names[i], outputImage)
         cv.waitKey(0)
 
         mask = image[1]
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         ax1.plot(histogram_fore, label='foreground')
         ax1.plot(histogram_back, label='background')
         ax1.legend()
-        fig1.savefig("output_image/proposed/histogram_"+names[i])
+        fig1.savefig("output_synthetic/proposed/histogram_"+names[i])
  
     print("Specificity : ", str(np.sum(specificity)*100/total_pixel))
     print("Sensitivity : ", str(np.sum(sensitivity)*100/total_pixel))
