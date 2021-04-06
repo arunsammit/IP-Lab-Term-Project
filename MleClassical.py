@@ -43,7 +43,7 @@ class ClassicalModel:
 
 
 if __name__ == "__main__":
-    images, names = getImages('./input_synthetic', './mask_synthetic')
+    images, names = getImages('./input_image_temp', './mask_temp')
     fp = ClassicalModel(images)
     figs = []
     dice = []
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
     fp.plotModel(ax)
     figs.append(fig)
-    fig.savefig(f'./output_synthetic/classical/plots/plot.jpg')
+    fig.savefig(f'./output_image/classical/plots/plot.jpg')
 
     for i, image in enumerate([image for image in images]):
         outputImage = fp.segmentImage(image[0])
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         # cv.imshow("image", image[0])
         # cv.imshow("mask", image[1])
         # cv.imshow('segmentedOutputImage', outputImage)
-        cv.imwrite('output_synthetic/classical/'+names[i], outputImage)
+        cv.imwrite('output_image/classical/'+names[i], outputImage)
         cv.waitKey(0)
 
     print("Specificity : ", str(np.sum(specificity)*100/total_pixel))
