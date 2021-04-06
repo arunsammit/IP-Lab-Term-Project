@@ -1,3 +1,0 @@
-Specificity : 57.27843274498584
-Sensitivity : 85.19823145535346
-Dice Measure : 44.58062122039141
