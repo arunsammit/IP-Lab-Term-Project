@@ -43,7 +43,11 @@ class ClassicalModel:
 
 
 if __name__ == "__main__":
-    images, names = getImages('./input_image_temp', './mask_temp')
+    if(len(sys.argv)!=3):
+        print("usage python3 MleClassical.py input_image/ input_mask/")
+        sys.exit(1)
+    images, names = getImages(sys.argv[1], sys.argv[2])
+    input_image_type = sys.argv[1].split('_')[1]
     fp = ClassicalModel(images)
     figs = []
     dice = []
@@ -54,7 +58,7 @@ if __name__ == "__main__":
     fig, ax = plt.subplots()
     fp.plotModel(ax)
     figs.append(fig)
-    fig.savefig(f'./output_image/classical/plots/plot.jpg')
+    fig.savefig(f'./output_{input_image_type}/classical/plots/plot.jpg')
 
     for i, image in enumerate([image for image in images]):
         outputImage = fp.segmentImage(image[0])
@@ -82,7 +86,7 @@ if __name__ == "__main__":
         # cv.imshow("image", image[0])
         # cv.imshow("mask", image[1])
         # cv.imshow('segmentedOutputImage', outputImage)
-        cv.imwrite('output_image/classical/'+names[i], outputImage)
+        cv.imwrite(f'output{input_image_type}/classical/'+names[i], outputImage)
         cv.waitKey(0)
 
     print("Specificity : ", str(np.sum(specificity)*100/total_pixel))

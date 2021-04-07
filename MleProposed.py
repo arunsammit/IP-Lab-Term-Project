@@ -68,7 +68,13 @@ class ProposedModel:
 
 
 if __name__ == "__main__":
-    images, names = getImages('./input_image_temp', './mask_temp')
+    if(len(sys.argv) != 3):
+        print("usage python3 MleClassical.py input_image/ input_mask/")
+        print("Exiting...")
+        sys.exit(1)
+    images, names = getImages(sys.argv[1], sys.argv[2])
+    input_image_type = sys.argv[1].split('_')[1]
+    images, names = getImages(sys.argv[1], sys.argv[2])
     fp = ProposedModel(images)
     figs = []
     dice = []
@@ -81,7 +87,7 @@ if __name__ == "__main__":
         fig, ax = plt.subplots()
         fp.plotModel(image[0], ax)
         figs.append(fig)
-        fig.savefig(f'./output_image/proposed/plots/{names[i]}')
+        fig.savefig(f'./output_{input_image_type}/proposed/plots/{names[i]}')
         # print(image[0].shape)
         # print(outputImage.shape)
         dn = (outputImage == 0)
@@ -106,7 +112,7 @@ if __name__ == "__main__":
         # cv.imshow("image", image[0])
         # cv.imshow("mask", image[1])
         # cv.imshow('segmentedOutputImage', outputImage)
-        cv.imwrite('output_image/proposed/'+names[i], outputImage)
+        cv.imwrite(f'output_{input_image_type}/proposed/{names[i]}', outputImage)
         cv.waitKey(0)
 
         mask = image[1]
@@ -119,7 +125,7 @@ if __name__ == "__main__":
         ax1.plot(histogram_fore, label='foreground')
         ax1.plot(histogram_back, label='background')
         ax1.legend()
-        fig1.savefig("output_image/proposed/histogram_"+names[i])
+        fig1.savefig(f"output_{input_image_type}/proposed/histogram_{names[i]}")
  
     print("Specificity : ", str(np.sum(specificity)*100/total_pixel))
     print("Sensitivity : ", str(np.sum(sensitivity)*100/total_pixel))
