@@ -12,7 +12,7 @@ To run the code for classical model use the command
 python3 MleClassical.py input_image_directory/ input_mask_directory/ 
 ```
 
-TO run the code for proposed model use the command
+T0 run the code for proposed model use the command
 
 ``` shell
 python3 MleProposed.py input_image_directory/ input_mask_directory/
